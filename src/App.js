@@ -1,25 +1,145 @@
-import logo from './logo.svg';
+import React from "react";
+import Map from './components/Map/map.js';
+import { Zoom, applyMatrixToPoint } from "@visx/zoom";
+import { RectClipPath } from '@visx/clip-path';
+import * as d3 from 'd3';
+import Legend from "./components/Legend/legend.js";
 import './App.css';
+import InfoCard from "./components/InfoCard/InfoCard.js";
+import { useCountryContext } from "./context/countryContext.js";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+function getWindowDimensions() {
+  const { innerWidth: width, innerHeight: height } = window;
+  return {
+    width,
+    height
+  };
 }
 
-export default App;
+function App() {
+
+  const {width, height} = getWindowDimensions();
+  const [happyData, setHappyData] = React.useState([]);
+  const [mousePos, setMousePos]  = React.useState(0);
+  const countryContext = useCountryContext();
+
+  const centerX = width / 2;
+  const centerY = height / 2;
+  const initialTransform = {
+    scaleX: 2,
+    scaleY: 2,
+    translateX: -centerX ,
+    translateY: -centerY + 400,
+    skewX: 0,
+    skewY: 0,
+  };
+
+  React.useEffect(() => {
+    const handleMouseMove = (event) => {
+      setMousePos({ x: event.clientX, y: event.clientY });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+
+    return () => {
+      window.removeEventListener(
+        'mousemove',
+        handleMouseMove
+      );
+    };
+  }, []);
+
+
+  React.useEffect(()=>{
+    d3.csv(`${process.env.PUBLIC_URL}/data/2019.csv`)
+          .then((res)=>{
+              //console.log(res);
+              const sorted = res.sort(function(x, y){
+                return d3.ascending(x.Score, y.Score);
+              });
+
+              //console.log(sorted)
+
+              setHappyData(sorted);
+          }).catch((err)=>{
+              console.log('error loading data', err);
+          })
+  },[]);
+
+  function constrain(transformMatrix, prevTransformMatrix) {
+    const min = applyMatrixToPoint(transformMatrix, { x: -200, y: -200 });
+    const max = applyMatrixToPoint(transformMatrix, { x: width, y: height });
+    if (max.x < width || max.y < height) {
+      return prevTransformMatrix;
+    }
+    if (min.x > 0 || min.y > 0) {
+      return prevTransformMatrix;
+    }
+    return transformMatrix;
+ }
+  
+
+  return (
+    <div className="App">
+
+      <div className="VisHeader">
+        <h2 style={{fontFamily: "Inter-Bold", fontSize: 18, color: '#000', textAlign: 'left', marginTop: 30}}>How happy is the world?</h2>
+        <p style={{fontFamily: "Inter-Regular", fontSize: 14, width: 480}}>This visualisation maps the world happiness index by their overall score. It explores and identifies the impact of GDP, freedom of choice and social support on society.</p>
+      </div>
+
+      <div className="VisFooter">
+        <text className="VisFooterText">From Axamattic</text>
+      </div>
+
+      <Legend happyData={happyData}/>
+
+      {
+        countryContext.showInfoCard ?
+
+        <InfoCard mousePos={mousePos} width={width} height={height}/>
+        :
+        null
+      }
+      
+     
+
+
+    {
+      happyData == false 
+      ? null 
+      :
+    
+      <Zoom
+       width={width}
+       height={height}
+       scaleXMin={width/1100}
+       scaleXMax={5}
+       scaleYMin={height/1100}
+       scaleYMax={5}
+       initialTransformMatrix={initialTransform}
+       constrain={constrain}
+      >
+
+        {(zoom) => (
+          <svg
+            width={width}
+            height={height}
+            style={{ cursor: zoom.isDragging ? 'grabbing' : 'grab', touchAction: 'none' }}
+            ref={zoom.containerRef}
+          >
+            {/* <RectClipPath id="zoom-clip" width={width} height={height} /> */}
+            <g transform={zoom.toString()}>
+              <Map happyData={happyData}/>
+            </g>
+             
+          </svg>
+        )}
+
+      </Zoom>
+    }
+    </div>
+  )
+
+}
+
+export default React.memo(App);

@@ -2,12 +2,21 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
+import { CountryContextProvider } from './context/countryContext';
 import reportWebVitals from './reportWebVitals';
+
+//fonts 
+import './fonts/Inter-Bold.ttf';
+import './fonts/Inter-Medium.ttf';
+import './fonts/Inter-Regular.ttf';
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <CountryContextProvider>
+      <App />
+    </CountryContextProvider>
   </React.StrictMode>
 );
 
