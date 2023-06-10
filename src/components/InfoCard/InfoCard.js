@@ -1,7 +1,7 @@
 import React from "react"; 
 import { Text } from "@visx/text";
 import { useCountryContext } from "../../context/countryContext";
-import './index.css'
+import './index.css';
 
 function InfoCard ({mousePos, width, height}) {
 
