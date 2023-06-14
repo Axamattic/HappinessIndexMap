@@ -1,6 +1,8 @@
 import React from "react";
 import { scaleQuantize, scaleOrdinal } from "@visx/scale";
 import {Mercator, Graticule} from "@visx/geo";
+import {geoCentroid} from 'd3';
+import {Text} from '@visx/text'
 import * as topojson from 'topojson-client';
 import topology from '../../resource/earth-topo.json';
 import CountryItem from '../CountryItem/CountryItem.js';
@@ -27,6 +29,13 @@ function Map (happyData){
 
     const countryContext = useCountryContext();
 
+    const textr = () => (
+        <svg>
+            <Text>ddddd</Text>
+        </svg>
+        
+    )
+
 
     return(
         <>
@@ -35,13 +44,14 @@ function Map (happyData){
         data={world.features}
         scale={scale}
         translate={[centerX, centerY + 50]}
+        centroid={()=> textr()}
         >
         {
             (mercator) => ( 
             <g>
                 {/* <Graticule graticule={(g) => mercator.path(g) || ''} stroke="rgba(33,33,33,0.01)" /> */}
-                {mercator.features.map(({ feature, path }, i) => (
-                    
+                {mercator.features.map(({ feature, path, projection }, i) => {
+                    const cetroidCords = projection(geoCentroid(feature));
                     // <g> 
                     //     <path
                     //         key={`map-feature-${i}`}
@@ -51,9 +61,13 @@ function Map (happyData){
                     //     />
                     // </g>
 
-                    <CountryItem happyData={happyData.happyData} feature={feature} path={path} i={i}/>
-                    
-                ))}
+                    return(
+                        <>
+                            <CountryItem happyData={happyData.happyData} feature={feature} path={path} i={i} centroid={cetroidCords} width={width} height={height}/>
+                           
+                        </>
+                    )                    
+})}
             </g>
             )
         }

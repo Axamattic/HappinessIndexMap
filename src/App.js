@@ -1,6 +1,7 @@
 import React from "react";
 import Map from './components/Map/map.js';
 import { Zoom, applyMatrixToPoint } from "@visx/zoom";
+import {ParentSize} from '@visx/responsive'
 import { RectClipPath } from '@visx/clip-path';
 import * as d3 from 'd3';
 import Legend from "./components/Legend/legend.js";
@@ -83,15 +84,19 @@ function App() {
     <div className="App">
 
       <div className="VisHeader">
-        <h2 style={{fontFamily: "Inter-Bold", fontSize: 18, color: '#000', textAlign: 'left', marginTop: 30}}>How happy is the world?</h2>
-        <p style={{fontFamily: "Inter-Regular", fontSize: 14, width: 480}}>This visualisation maps the world happiness index by their overall score. It explores and identifies the impact of GDP, freedom of choice and social support on society.</p>
+        <div>
+          <h2 style={{fontFamily: "Inter-Bold", fontSize: 20, color: '#0082FF', textAlign: 'left'}}>How happy is the world?</h2>
+          <p style={{fontFamily: "Inter-Regular", fontSize: 14, color: '#fff'}}>This visualisation maps the world happiness index by their overall score. It explores and identifies the impact of GDP, freedom of choice and social support on society.</p>
+        </div>
+        <div style={{backgroundColor: '#003262', width: '100%', height: 2, marginTop: 10, marginBottom: 10}}></div>
+        <Legend happyData={happyData}/>
       </div>
 
       <div className="VisFooter">
-        <text className="VisFooterText">From Axamattic</text>
+        <img style={{width: 118, height: 34}} src={require('./resource/logo.png')}/>
       </div>
 
-      <Legend happyData={happyData}/>
+      
 
       {
         countryContext.showInfoCard ?
@@ -108,34 +113,37 @@ function App() {
       happyData == false 
       ? null 
       :
-    
-      <Zoom
-       width={width}
-       height={height}
-       scaleXMin={width/1100}
-       scaleXMax={5}
-       scaleYMin={height/1100}
-       scaleYMax={5}
-       initialTransformMatrix={initialTransform}
-       constrain={constrain}
-      >
-
-        {(zoom) => (
-          <svg
-            width={width}
-            height={height}
-            style={{ cursor: zoom.isDragging ? 'grabbing' : 'grab', touchAction: 'none' }}
-            ref={zoom.containerRef}
+    <ParentSize>
+      {(parent) => (
+          <Zoom
+          width={parent.width}
+          height={parent.height}
+          scaleXMin={parent.width/1100}
+          scaleXMax={5}
+          scaleYMin={parent.height/1100}
+          scaleYMax={5}
+          initialTransformMatrix={initialTransform}
+          constrain={constrain}
           >
-            {/* <RectClipPath id="zoom-clip" width={width} height={height} /> */}
-            <g transform={zoom.toString()}>
-              <Map happyData={happyData}/>
-            </g>
-             
-          </svg>
-        )}
 
-      </Zoom>
+          {(zoom) => (
+            <svg
+              width={width}
+              height={height}
+              style={{ cursor: zoom.isDragging ? 'grabbing' : 'grab', touchAction: 'none' }}
+              ref={zoom.containerRef}
+            >
+              {/* <RectClipPath id="zoom-clip" width={width} height={height} /> */}
+              <g transform={zoom.toString()}>
+                <Map happyData={happyData}/>
+              </g>
+                
+            </svg>
+          )}
+
+          </Zoom>
+      )}
+    </ParentSize>
     }
     </div>
   )

@@ -9,19 +9,12 @@ function Legend (happyData){
                 Math.round(Math.min(...happyData.happyData.map((f) => f.Score))),
                 Math.round(Math.max(...happyData.happyData.map((f) => f.Score))),
             ],
-        range: ['#FFEBA6', '#ADFFA6', '#A6EAFF', '#A6B4FF', '#FFA6D1',  '#FFA6A6'],
+        range: ['#A0FF98', '#FFE68D', '#8EE4FF', '#99A9FF', '#FF9CCC',  '#FF9898'],
     })
 
     const styles = {
         legendItemContainer : {
-            display: 'flex', 
-            flexDirection: 'row', 
-            height: 50, 
-            backgroundColor: '#CDD8EE', 
-            marginBottom: 10, 
-            borderRadius: 10,
-            alignItems : 'center',
-            padding: 10
+
         }
     }
 
@@ -51,35 +44,38 @@ function Legend (happyData){
     return(
         <div 
             style={{
-                position: 'absolute',
-                top: 150,
-                backgroundColor: '#EFF6FF', 
-                width: 240, 
-                height: 470, 
-                borderRadius: 10,
-                marginLeft: 50,
-                padding: 10
+                flexDirection: 'column-reverse',
+                width: '90%', 
+                borderRadius: 4,
+                padding: 10,
             }}>
-                <LegendQuantile
-                    scale={scoreColour}
-                    direction="column-reverse"
-                    itemDirection="row-reverse"
-                    labelMargin="0 20px 0 0"
-                    shapeMargin="1px 0 0"
-                >
-                    {(labels)=> labels.map((label)=>{
-                        //const size = sizeScale(label.datum) ?? 0;
-                        const color = scoreColour(label.datum);
-                        return(
-                           <LegendItem style={styles.legendItemContainer} key={`legend-${label.text}-${label.index}`}>
-                               <div style={{width: 40, height: 40, backgroundColor: color, borderRadius: 10}}/>
-                                <LegendLabel style={{fontSize: 14, marginLeft: 10, color: '#4270CF', fontFamily: "Inter-Bold"}}>
-                                    {labelRender(label.index)}
-                                </LegendLabel>
-                           </LegendItem>
-                        )
-                    })}
-                </LegendQuantile>
+                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+                    <LegendQuantile
+                        scale={scoreColour}
+                        labelMargin="0 20px 0 0"
+                        shapeMargin="1px 0 0"
+                        style={{flex: 1, display: 'flex', flexDirection: 'row'}}
+                    >
+                        {(labels)=> labels.map((label)=>{
+                            //const size = sizeScale(label.datum) ?? 0;
+                            const color = scoreColour(label.datum);
+                            return(
+                            <LegendItem style={styles.legendItemContainer} key={`legend-${label.text}-${label.index}`}>
+                                <div style={{width: 30, height: 30, backgroundColor: color, borderRadius: 10}}/>
+                            </LegendItem>
+                            )
+                        })}
+                        
+                    </LegendQuantile>
+                </div>
+                
+                <div 
+                    style={{
+                        display: 'flex', flexDirection: 'row', justifyContent: 'space-between'
+                    }}>
+                    <h5 style={{color: '#fff'}}>Most Happy</h5>
+                    <h5 style={{color: '#fff'}}>Least Happy</h5>
+                </div>
         </div>
     )
 

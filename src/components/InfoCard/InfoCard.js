@@ -12,7 +12,7 @@ function InfoCard ({mousePos, width, height}) {
         // will minus the info card from value
 
         if(y > height/2){
-            return y - 430
+            return y - 250
         }else{
             return y
         }
@@ -24,30 +24,36 @@ function InfoCard ({mousePos, width, height}) {
             position:'absolute',
             top: calculateYPos(mousePos.y), 
             left: mousePos.x + 10,
-            width: 300,
-            height: 380,
+            width: 210,
+            height: 250,
             backgroundColor: '#E1ECFC',
             borderRadius: 20,
-            padding: 15
-
+            padding: 15,
+            zIndex: 50,
         },
         header:{
-            fontSize: 20,
-            color: '#4E7CF6'
+            fontSize: 18,
+            color: '#4A94FF'
         },
         subtitle:{
-            fontSize: 16,
+            fontSize: 14,
             fontWeight: 600,
             color: '#4C72C8',
+            margin: 0,
+            padding: 0,
+            marginTop: 10
         },
         dataPointContainer: {
             margin: 0,
-            padding: 0
+            padding: 0,
         },
         dataPoint:{
             fontSize: 16,
             color: '#4C72C8',
             fontWeight: 500,
+            margin: 0,
+            padding: 0,
+            marginTop: 5
         },
         score:{
             display: 'flex',
