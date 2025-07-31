@@ -93,7 +93,7 @@ function App() {
       </div>
 
       <div className="VisFooter">
-        <img style={{width: 118, height: 34}} src={require('./resource/logo.png')}/>
+        <img style={{width:'100%'}} src={require('./resource/logo.png')}/>
       </div>
 
       
